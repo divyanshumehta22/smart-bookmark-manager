@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Smart Bookmark Manager - A simple full-stack bookmark manager built with Next.js (App Router) and Supabase that allows users to securely save and manage personal bookmarks using Google Authentication.
 
-## Getting Started
+Core Features
 
-First, run the development server:
+1. Google Authentication (OAuth Only)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+. Users can sign up and log in using Google OAuth
+. No email/password authentication
+. Secure authentication powered by Supabase Auth
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Add Bookmarks
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+. Logged-in users can add:
+    a. Bookmark Title
+    b. Bookmark URL
+. Data is stored in Supabase PostgreSQL database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+3. Private Bookmarks (Row-Level Security)(RLS)
 
-To learn more about Next.js, take a look at the following resources:
+. Each user's bookmarks are completely private
+. User A cannot view User B's bookmarks
+. Implemented using Supabase Row Level Security (RLS) policies
+. With the help of Row - Level Security, it is a database security feature that controls which records a user is allowed to access in a table.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Real-Time Updates
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+. Bookmark list updates instantly without refreshing the page
+. If two tabs are open:
+    a. Adding a bookmark in one tab updates the other immediately
+. Powered by Supabase Realtime subscriptions
+. Supabase Realtime Subscriptions allow your application to get connected to database. If the user adds data, the database got updated. 
 
-## Deploy on Vercel
+5. Delete Bookmarks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+. Users can delete only their own bookmarks
+. Securely enforced via RLS policies
+. With the one click, the delete button deletes the particular bookmark.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+
+Tech Stack
+
+. Next.js (App Router)
+. Supabase
+    a. Authentication (Google OAuth)
+    b. PostgreSQL Database
+    c. Realtime Updates
+. Tailwind CSS
+. TypeScript and JavaScript
+
+
+
+
+Database Structure
+
+Table: bookmarks
+
+| Column      | Type        | Description |
+|------------|------------|------------|
+| id         | uuid       | Primary key |
+| user_id    | uuid       | References authenticated user |
+| title      | text       | Bookmark title |
+| url        | text       | Bookmark URL |
+| created_at | timestamp  | Auto-generated |
+
+
+
+Security Implementation
+
+Row Level Security (RLS)
+
+Enabled RLS on bookmarks table with policies:
+
+. Users can insert only their own bookmarks
+. Users can view only their own bookmarks
+. Users can delete only their own bookmarks
+
+Example Policy Logic:
+
+sql
+auth.uid() = user_id
