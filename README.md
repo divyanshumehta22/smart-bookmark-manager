@@ -81,3 +81,7 @@ Example Policy Logic:
 
 sql
 auth.uid() = user_id
+
+Challenges Encountered and the Solutions Implemented
+
+During development, I faced several important implementation challenges that helped me strengthen my understanding of authentication, security, and real-time systems. Initially, Google Authentication was not working because the provider was not enabled in Supabase. I resolved this by enabling the Google provider in Supabase Authentication settings, creating OAuth credentials in Google Cloud Console, and correctly configuring the Supabase callback URL. Another issue I encountered was that real-time updates were not reflecting across multiple tabs. After debugging, I discovered that replication was not enabled for the bookmarks table. I fixed this by adding the table to the supabase_realtime publication and implementing a proper Realtime channel subscription in the frontend. I also noticed that bookmarks were visible between different users, which indicated that Row-Level Security (RLS) was not enforced. I enabled RLS on the database and created strict SELECT, INSERT, and DELETE policies using auth.uid() = user_id to ensure complete user-level data isolation. Additionally, configuring the OAuth consent screen in Google Cloud Console required careful setup, including selecting the correct user type, defining app details, and adding the authorized redirect URI. These challenges helped me gain practical experience in secure authentication flows, database-level authorization, and real-time architecture design.
